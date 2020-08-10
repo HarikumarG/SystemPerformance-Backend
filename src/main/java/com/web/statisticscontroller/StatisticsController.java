@@ -11,7 +11,7 @@ import com.google.gson.*;
 import com.web.statisticsmodel.StatisticsModel;
 import com.web.statistics.Statistics;
 
-@WebServlet("/getSystemStats")
+@WebServlet("/getStatsHttp")
 public class StatisticsController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
