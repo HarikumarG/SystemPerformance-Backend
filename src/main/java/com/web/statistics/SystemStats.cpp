@@ -15,16 +15,20 @@ JNIEXPORT jobject JNICALL Java_com_web_statistics_Statistics_getStats(JNIEnv *en
 	{
 		jfieldID totalram = env->GetFieldID(statsclass,"totalram","J");
 		jfieldID freeram = env->GetFieldID(statsclass,"freeram", "J");
+		jfieldID usedram = env->GetFieldID(statsclass,"usedram","J");
 		jfieldID totalswap = env->GetFieldID(statsclass,"totalswap","J");
 		jfieldID freeswap = env->GetFieldID(statsclass,"freeswap","J");
+		jfieldID usedswap = env->GetFieldID(statsclass,"usedswap","J");
 		jfieldID loadavgpast1 = env->GetFieldID(statsclass,"loadavgpast1","F");
 		jfieldID loadavgpast5 = env->GetFieldID(statsclass,"loadavgpast5","F");
 		jfieldID loadavgpast15 = env->GetFieldID(statsclass,"loadavgpast15","F");
 
 		env->SetLongField(statsdata,totalram,si.totalram);
 		env->SetLongField(statsdata,freeram,si.freeram);
+		env->SetLongField(statsdata,usedram,(si.totalram-si.freeram));
 		env->SetLongField(statsdata,totalswap,si.totalswap);
 		env->SetLongField(statsdata,freeswap,si.freeswap);
+		env->SetLongField(statsdata,usedswap,(si.totalswap-si.freeswap));
 		env->SetFloatField(statsdata,loadavgpast1,si.loads[0]/65536.0);
 		env->SetFloatField(statsdata,loadavgpast5,si.loads[1]/65536.0);
 		env->SetFloatField(statsdata,loadavgpast15,si.loads[2]/65536.0);

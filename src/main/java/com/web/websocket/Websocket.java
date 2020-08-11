@@ -13,7 +13,7 @@ import com.web.helpers.Singleton;
 import java.io.IOException;
 import java.util.HashMap;
 
-@ServerEndpoint(value = "/getStatsWebsocket",encoders = WebsocketEncoder.class,decoders = WebsocketDecoder.class)
+@ServerEndpoint(value = "/getStatsWebsocket",encoders = {WebsocketEncoder.class,WebsocketEncoderStats.class},decoders = {WebsocketDecoder.class,WebsocketDecoderStats.class})
 public class Websocket {
 
 	@OnOpen

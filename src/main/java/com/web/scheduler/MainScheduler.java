@@ -14,7 +14,7 @@ public class MainScheduler {
 	}
 	public void startScheduler() {
 
-		long delay = 2000;
+		long delay = 10000;
 		long period = 10000;
 
 		timer.scheduleAtFixedRate(task,delay,period);
