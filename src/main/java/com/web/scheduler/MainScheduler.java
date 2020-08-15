@@ -1,26 +1,16 @@
 package com.web.scheduler;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class MainScheduler {
+public class MainScheduler{
 	
-	TimerTask task;
-	Timer timer;
+	SchedulerTask task;
 
 	public MainScheduler() {
-		task = new SchedulerTask();
-		timer = new Timer();
+		task = new SchedulerTask();	
 	}
 	public void startScheduler() {
-
-		long delay = 10000;
-		long period = 10000;
-
-		timer.scheduleAtFixedRate(task,delay,period);
+		task.start();
 	}
 	public void stopScheduler() {
-		task.cancel();
-		timer.cancel();
+		task.stop();	
 	}
 }
