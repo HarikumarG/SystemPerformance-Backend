@@ -38,16 +38,18 @@ class SchedulerTask extends Thread{
 	private void parseData(String line) {
 
 		String[] stats = line.split("/",0);
-		long totalram = Long.parseLong(stats[0]);
-		long freeram = Long.parseLong(stats[1]);
-		long usedram = Long.parseLong(stats[2]);
-		long totalswap = Long.parseLong(stats[3]);
-		long freeswap = Long.parseLong(stats[4]);
-		long usedswap = Long.parseLong(stats[5]);
-		float loadavgpast1 = Float.valueOf(stats[6]).floatValue();
-		float loadavgpast5 = Float.valueOf(stats[7]).floatValue();
-		float loadavgpast15 = Float.valueOf(stats[8]).floatValue();
-		StatisticsModel model = new StatisticsModel(totalram,freeram,usedram,totalswap,freeswap,usedswap,loadavgpast1,loadavgpast5,loadavgpast15);
+		long uptime = Long.parseLong(stats[0]);
+		long totalram = Long.parseLong(stats[1]);
+		long freeram = Long.parseLong(stats[2]);
+		long usedram = Long.parseLong(stats[3]);
+		long totalswap = Long.parseLong(stats[4]);
+		long freeswap = Long.parseLong(stats[5]);
+		long usedswap = Long.parseLong(stats[6]);
+		float loadavgpast1 = Float.valueOf(stats[7]).floatValue();
+		float loadavgpast5 = Float.valueOf(stats[8]).floatValue();
+		float loadavgpast15 = Float.valueOf(stats[9]).floatValue();
+		StatisticsModel model = new StatisticsModel(uptime,totalram,freeram,usedram,totalswap,freeswap,usedswap,loadavgpast1,loadavgpast5,loadavgpast15);
+		Singleton.getWebsocketService().storeData(model);
 		Singleton.getWebsocketService().sendDataToAllSubscribers(model);
 	}
 }

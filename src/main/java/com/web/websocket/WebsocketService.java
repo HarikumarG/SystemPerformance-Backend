@@ -1,7 +1,6 @@
 package com.web.websocket;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import javax.websocket.Session;
 import javax.websocket.EncodeException;
 import java.io.IOException;
@@ -12,7 +11,7 @@ import com.web.statisticsmodel.StatisticsModel;
 public class WebsocketService {
 
 	private final HashMap<String,Session> client; 
-
+	private final ArrayList<StatisticsModel> dataStore = new ArrayList<StatisticsModel>();
 	public WebsocketService() {
 		client = new HashMap<String,Session>(); 
 	}
@@ -34,6 +33,7 @@ public class WebsocketService {
 		switch(model.getType()) {
 			case "login": {
 				handleLogin(model,session);
+				sendStoredData(session);
 				break;
 			}
 			default : {
@@ -53,9 +53,24 @@ public class WebsocketService {
 		}
 	}
 
+	private void sendStoredData(Session session) {
+		try {
+			for(int i = 0; i < dataStore.size(); i++) {
+				session.getBasicRemote().sendObject(dataStore.get(i));
+			}
+			System.out.println("Data Store is sent to "+session.getUserProperties().get("name"));
+		} catch(IOException e) {
+			System.out.println("Send stored data "+e.getMessage());
+		} catch(EncodeException e) {
+			System.out.println("Send stored data "+e.getMessage());
+		}
+	}
+
+	public void storeData(StatisticsModel data) {
+		dataStore.add(data);
+	}
 	public void sendDataToAllSubscribers(StatisticsModel data){
 		try {
-
 			String jsonObj = new Gson().toJson(data);
 			System.out.println(jsonObj);
 

@@ -2,6 +2,7 @@ package com.web.statisticsmodel;
 
 public class StatisticsModel {
 
+	private long uptime;
 	private long totalram;
 	private long freeram;
 	private long usedram;
@@ -12,8 +13,9 @@ public class StatisticsModel {
 	private float loadavgpast5;
 	private float loadavgpast15;
 
-	public StatisticsModel(long totalram,long freeram,long usedram,long totalswap,long freeswap,long usedswap,float loadavgpast1,float loadavgpast5,float loadavgpast15) {
+	public StatisticsModel(long uptime,long totalram,long freeram,long usedram,long totalswap,long freeswap,long usedswap,float loadavgpast1,float loadavgpast5,float loadavgpast15) {
 
+		this.uptime = uptime;
 		this.totalram = totalram;
 		this.freeram = freeram;
 		this.usedram = usedram;

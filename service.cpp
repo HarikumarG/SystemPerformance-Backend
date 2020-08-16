@@ -15,8 +15,10 @@ int client_sockets[max_clients];
 
 void sendDatatoAllclients() {
 	struct sysinfo si;
+    fstream file;
 	while(true) {
 		if(sysinfo(&si) != -1) {
+            string uptime = to_string(si.uptime);
 			string totalram = to_string(si.totalram);
 			string freeram = to_string(si.freeram);
 			string usedram = to_string(si.totalram-si.freeram);
@@ -26,7 +28,10 @@ void sendDatatoAllclients() {
 			string loadavgpast1 = to_string(si.loads[0]/65536.0);
 			string loadavgpast5 = to_string(si.loads[1]/65536.0);
 			string loadavgpast15 = to_string(si.loads[2]/65536.0);
-			string data = totalram+"/"+freeram+"/"+usedram+"/"+totalswap+"/"+freeswap+"/"+usedswap+"/"+loadavgpast1+"/"+loadavgpast5+"/"+loadavgpast15+"\n";
+			string data = uptime+"/"+totalram+"/"+freeram+"/"+usedram+"/"+totalswap+"/"+freeswap+"/"+usedswap+"/"+loadavgpast1+"/"+loadavgpast5+"/"+loadavgpast15+"\n";
+            file.open("data.txt",ios::out | ios::in | ios::app);
+            file << data;
+            file.close();
 			const char *buffer = data.c_str();
 
 			for(int i = 0; i < max_clients; i++) {
@@ -36,10 +41,24 @@ void sendDatatoAllclients() {
 				}
 			}
 		}
-		this_thread::sleep_for(10s);
+		this_thread::sleep_for(20s);
 	}
 }
-
+void sendStoredData(int socket_fd) {
+    this_thread::sleep_for(2s);
+    fstream file;
+    file.open("data.txt",ios::in);
+    if(file.is_open()) {
+        string line;
+        const char *buffer;
+        while(getline(file,line)) {
+            line = line + "\n";
+            buffer = line.c_str();
+            send(socket_fd,buffer,strlen(buffer),0);
+        }
+    }
+    file.close();
+}
 int main() 
 {
 	for(int i = 0; i < max_clients; i++)
@@ -97,7 +116,7 @@ int main()
     			max_sd = client_sockets[i];
     	}
         int activity = select( max_sd + 1 , &readfds , NULL , NULL , NULL);
-
+        cout<<"activity"<<endl;
         if((activity < 0) && (errno != EINTR))
         	cout<<"Select error"<<endl;
 
@@ -109,13 +128,14 @@ int main()
                 return -1;  
             }   
             cout<<"New Connection socket_fd is "<<new_socket<<" ip is : "<<inet_ntoa(address.sin_addr)<<" port is "<<ntohs(address.sin_port)<<endl;
-
+            
             for (int i = 0; i < max_clients; i++)
             {
                 if(client_sockets[i] == 0)
                 {   
                     client_sockets[i] = new_socket;   
-                    cout<<"Adding to list of sockets as "<<client_sockets[i]<<endl;                         
+                    cout<<"Adding to list of sockets as "<<client_sockets[i]<<endl;
+                    sendStoredData(new_socket);
                     break;
                 }
             }
