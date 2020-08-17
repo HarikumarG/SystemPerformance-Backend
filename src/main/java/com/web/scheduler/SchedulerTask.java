@@ -5,17 +5,20 @@ import com.web.statisticsmodel.StatisticsModel;
 import java.net.*;
 import java.io.*;
 
-class SchedulerTask extends Thread{
+public class SchedulerTask extends Thread{
 
+	private static Socket sock;
+	private static BufferedReader r;
 	public void run() {
 		try {
 			Thread.sleep(3000);
 			System.out.println("SchedulerTask is called");
-			Socket socket = new Socket("localhost",8081);
-			socket.setKeepAlive(true);
+			ServerSocket serversocket = new ServerSocket(8081);
+			Socket socket = serversocket.accept();
 			System.out.println("Socket connection established");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			//PrintWriter writer = new PrintWriter(socket.getOutputStream(),true);
+			this.sock = socket;
+			this.r = reader;
 			int c = 0;
 			String line = "";
 			while((c = reader.read()) != -1) {
@@ -26,17 +29,17 @@ class SchedulerTask extends Thread{
 					line = line + (char)c;
 				}
 			}
-			socket.close();
+			serversocket.close();
 			System.out.println("Socket is closed");
 		} catch(SocketException e) {
 			System.out.println("Oops! Socket is closed");
 		} catch(Exception e) {
 			System.out.println("Exception in Telnet class "+e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
 	private void parseData(String line) {
-
 		String[] stats = line.split("/",0);
 		long uptime = Long.parseLong(stats[0]);
 		long totalram = Long.parseLong(stats[1]);
@@ -48,8 +51,36 @@ class SchedulerTask extends Thread{
 		float loadavgpast1 = Float.valueOf(stats[7]).floatValue();
 		float loadavgpast5 = Float.valueOf(stats[8]).floatValue();
 		float loadavgpast15 = Float.valueOf(stats[9]).floatValue();
-		StatisticsModel model = new StatisticsModel(uptime,totalram,freeram,usedram,totalswap,freeswap,usedswap,loadavgpast1,loadavgpast5,loadavgpast15);
+		String type = stats[10];
+		StatisticsModel model = new StatisticsModel(uptime,totalram,freeram,usedram,totalswap,freeswap,usedswap,loadavgpast1,loadavgpast5,loadavgpast15,type);
 		Singleton.getWebsocketService().storeData(model);
-		Singleton.getWebsocketService().sendDataToAllSubscribers(model);
+		if(type.equals("socket")) {
+			Singleton.getWebsocketService().sendDataToAllSubscribers(model);
+		} else {
+			Singleton.getWebsocketService().sendDataToSubscriber(model,type);
+		}
+	}
+
+	public String getDataHttp(String name) {
+		try {
+			PrintWriter writer = new PrintWriter(sock.getOutputStream(),true);
+			writer.println(name);
+			return "SUCCESS";
+			// int c = 0;
+			// String line = "";
+			// StatisticsModel data = null;
+			// while((c = r.read()) != -1) {
+			// 	if((char)c == '\n') {
+			// 		data = parseData(line);
+			// 		break;
+			// 	} else {
+			// 		line = line + (char)c;
+			// 	}
+			// }
+			// return data;
+		} catch(Exception e) {
+			System.out.println("GetDataHTTP error "+e.getMessage());
+		}
+		return null;
 	}
 }

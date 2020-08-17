@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.*;
 
-import com.web.statisticsmodel.StatisticsModel;
 import com.web.statistics.Statistics;
+import com.web.scheduler.MainScheduler;
 
 @WebServlet("/getStatsHttp")
 public class StatisticsController extends HttpServlet {
@@ -34,9 +34,13 @@ public class StatisticsController extends HttpServlet {
 		String name = jsonObject.get("name").getAsString();
 		System.out.println(name);
 
-		StatisticsModel model = Statistics.getSystemData();
+		//StatisticsModel model = Statistics.getSystemData();
+
+		MainScheduler scheduler = new MainScheduler();
+		String result = scheduler.getStats(name);
 		
-		String jsonObj = new Gson().toJson(model);
+		String jsonObj = new Gson().toJson(result);
+		System.out.println(jsonObj);
 		response.getWriter().write(jsonObj);
 	}
 }

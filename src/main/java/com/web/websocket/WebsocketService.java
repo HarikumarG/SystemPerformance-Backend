@@ -69,7 +69,7 @@ public class WebsocketService {
 	public void storeData(StatisticsModel data) {
 		dataStore.add(data);
 	}
-	public void sendDataToAllSubscribers(StatisticsModel data){
+	public void sendDataToAllSubscribers(StatisticsModel data) {
 		try {
 			String jsonObj = new Gson().toJson(data);
 			System.out.println(jsonObj);
@@ -89,5 +89,23 @@ public class WebsocketService {
 		} catch(EncodeException e) {
 			System.out.println("Websocket service EncodeException "+e.getMessage());
 		}
+	}
+	public void sendDataToSubscriber(StatisticsModel data,String name) {
+		try {
+			String jsonObj = new Gson().toJson(data);
+			System.out.println(jsonObj);
+
+			if(client.size() == 0 || !client.containsKey(name)) {
+				System.out.println("No such client exist");
+			} else {
+				Session session = client.get(name);
+				session.getBasicRemote().sendObject(data);
+				System.out.println("Http data is sent to "+name);
+			}
+		} catch(IOException e) {
+			System.out.println("Websocket service IOException "+e.getMessage());
+		} catch(EncodeException e) {
+			System.out.println("Websocket service EncodeException "+e.getMessage());
+		}	
 	}
 }
