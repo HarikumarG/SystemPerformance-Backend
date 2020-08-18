@@ -4,7 +4,6 @@
 #include<sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
-// #include <sys/time.h>
 #include <arpa/inet.h>
 using namespace std;
 
@@ -24,14 +23,8 @@ string getStats(string type) {
         string loadavgpast1 = to_string(si.loads[0]/65536.0);
         string loadavgpast5 = to_string(si.loads[1]/65536.0);
         string loadavgpast15 = to_string(si.loads[2]/65536.0);
-        //if(type == "socket") {
-            string data = uptime+"/"+totalram+"/"+freeram+"/"+usedram+"/"+totalswap+"/"+freeswap+"/"+usedswap+"/"+loadavgpast1+"/"+loadavgpast5+"/"+loadavgpast15+"/"+type+"\n";
-            return data;            
-        // }
-        // else {
-        //     string data = uptime+"/"+totalram+"/"+freeram+"/"+usedram+"/"+totalswap+"/"+freeswap+"/"+usedswap+"/"+loadavgpast1+"/"+loadavgpast5+"/"+loadavgpast15+"/"+"hari\n";
-        //     return data;
-        // }
+        string data = uptime+"/"+totalram+"/"+freeram+"/"+usedram+"/"+totalswap+"/"+freeswap+"/"+usedswap+"/"+loadavgpast1+"/"+loadavgpast5+"/"+loadavgpast15+"/"+type+"\n";
+        return data;
     }
     return "";
 }

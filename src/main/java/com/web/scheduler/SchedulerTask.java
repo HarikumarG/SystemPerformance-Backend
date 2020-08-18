@@ -66,18 +66,6 @@ public class SchedulerTask extends Thread{
 			PrintWriter writer = new PrintWriter(sock.getOutputStream(),true);
 			writer.println(name);
 			return "SUCCESS";
-			// int c = 0;
-			// String line = "";
-			// StatisticsModel data = null;
-			// while((c = r.read()) != -1) {
-			// 	if((char)c == '\n') {
-			// 		data = parseData(line);
-			// 		break;
-			// 	} else {
-			// 		line = line + (char)c;
-			// 	}
-			// }
-			// return data;
 		} catch(Exception e) {
 			System.out.println("GetDataHTTP error "+e.getMessage());
 		}
