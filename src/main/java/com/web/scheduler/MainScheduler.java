@@ -1,6 +1,7 @@
 package com.web.scheduler;
 
 import com.web.helpers.Singleton;
+
 public class MainScheduler{
 	
 	SchedulerTask task;
@@ -12,9 +13,7 @@ public class MainScheduler{
 		task.start();
 	}
 	public void stopScheduler() {
+		Singleton.getStatisticsDao().closeConnection();
 		task.stop();	
-	}
-	public String getStats(String name) {
-		return task.getDataHttp(name);
 	}
 }

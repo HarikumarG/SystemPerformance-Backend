@@ -1,29 +1,40 @@
-#include<bits/stdc++.h>
-#include<sys/sysinfo.h>
-#include<thread>
-#include<sys/socket.h>
+#include <bits/stdc++.h>
+#include <sys/sysinfo.h>
+#include <thread>
+#include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <time.h>
 using namespace std;
 
 #define PORT 8081
 int client_socket = 0;
 bool connected = false;
-string getStats(string type) {
+time_t rawtime;
+char dateChar[11];
+char timeChar[9];
+struct tm *timeinfo;
+
+string getStats() {
     struct sysinfo si;
     if(sysinfo(&si) != -1) {
-        string uptime = to_string(si.uptime);
-        string totalram = to_string(si.totalram);
-        string freeram = to_string(si.freeram);
-        string usedram = to_string(si.totalram-si.freeram);
-        string totalswap = to_string(si.totalswap);
-        string freeswap = to_string(si.freeswap);
-        string usedswap = to_string(si.totalswap-si.freeswap);
-        string loadavgpast1 = to_string(si.loads[0]/65536.0);
-        string loadavgpast5 = to_string(si.loads[1]/65536.0);
-        string loadavgpast15 = to_string(si.loads[2]/65536.0);
-        string data = uptime+"/"+totalram+"/"+freeram+"/"+usedram+"/"+totalswap+"/"+freeswap+"/"+usedswap+"/"+loadavgpast1+"/"+loadavgpast5+"/"+loadavgpast15+"/"+type+"\n";
+        time(&rawtime);
+        timeinfo = localtime(&rawtime);
+        strftime(dateChar,11,"%F",timeinfo);
+        strftime(timeChar,9,"%T",timeinfo);
+        string date = dateChar;
+        string time = timeChar;
+        float trf = si.totalram;
+        float tr = trf/1000000000;
+        string totalram = to_string(tr);
+        long uri = si.totalram-si.freeram;
+        float urf = uri;
+        float ur = urf/1000000000;
+        string usedram = to_string(ur);
+        int val = round(((si.loads[0]/65536.0)*100)/2);
+        string cpuusage = to_string(val);
+        string data = date+" "+time+"/"+totalram+"/"+usedram+"/"+cpuusage+"\n";
         return data;
     }
     return "";
@@ -32,48 +43,46 @@ string getStats(string type) {
 void storeAndSendData() {
     fstream file;
 	while(true) {
-        string data = getStats("socket");
+        string data = getStats();
 	    file.open("data.txt",ios::out | ios::in | ios::app);
         file << data;
         file.close();
 		const char *buffer = data.c_str();
-		if(connected) {
+		if(connected && data != "") {
 			send(client_socket, buffer, strlen(buffer), 0);
 			cout<<"Data sent to "<<client_socket<<endl;
 		} else {
-            cout<<"Socket is not connected"<<endl;
+            cout<<"Socket is not connected so Store it"<<endl;
         }
-        this_thread::sleep_for(20s);
+        this_thread::sleep_for(600s);
 	}
 }
 void sendStoredData() {
     this_thread::sleep_for(1s);
     fstream file;
     file.open("data.txt",ios::in);
-    if(!connected) {
-        cout<<"Socket is not connected"<<endl;
-    } else {
-        if(file.is_open()) {
-            string line;
-            const char *buffer;
-            while(getline(file,line)) {
-                line = line + "\n";
-                buffer = line.c_str();
-                send(client_socket,buffer,strlen(buffer),0);
-            }
+    if(file.is_open()) {
+        string line;
+        const char *buffer;
+        while(getline(file,line)) {
+            line = line + "\n";
+            buffer = line.c_str();
+            send(client_socket,buffer,strlen(buffer),0);
         }
-        file.close();
-        cout<<"Stored data sent"<<endl;
+    } else {
+        cout<<"File opening error"<<endl;
     }
+    file.close();
+    cout<<"Stored data sent"<<endl;
 }
-bool checkChar(char s) {
-    if((s >= 'a' && s <='z') || (s >= 'A' && s <= 'Z'))
-        return true;
-    return false;
+void deleteContentsOfFile() {
+    fstream file;
+    file.open("data.txt",ios::out | ios::trunc);
+    file.close();
 }
 int main() 
 {
-
+    deleteContentsOfFile();
     thread t1(storeAndSendData);
     sockaddr_in address;
     if((client_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -98,23 +107,23 @@ int main()
         this_thread::sleep_for(2s);
     }
     cout<<"Connected"<<endl;
-    connected = true;
     sendStoredData();
+    connected = true;
+    while(true){}
+    // char buffer[1024];
+    // int readval;
 
-    char buffer[1024];
-    int readval;
-
-    while((readval = read(client_socket, buffer, 1024)) != 0) {
-        if(strlen(buffer) > 0) {
-            string s;
-            for(int i = 0; i < strlen(buffer); i++)
-                if(checkChar(buffer[i]))
-                    s = s + buffer[i];
-            cout<<s<<endl;
-            string data = getStats(s);
-            const char* sendBuffer = data.c_str();
-            send(client_socket, sendBuffer, strlen(sendBuffer), 0);
-        }
-    }
+    // while((readval = read(client_socket, buffer, 1024)) != 0) {
+    //     if(strlen(buffer) > 0) {
+    //         string s;
+    //         for(int i = 0; i < strlen(buffer); i++)
+    //             if(checkChar(buffer[i]))
+    //                 s = s + buffer[i];
+    //         cout<<s<<endl;
+    //         string data = getStats(s);
+    //         const char* sendBuffer = data.c_str();
+    //         send(client_socket, sendBuffer, strlen(sendBuffer), 0);
+    //     }
+    // }
 }
 

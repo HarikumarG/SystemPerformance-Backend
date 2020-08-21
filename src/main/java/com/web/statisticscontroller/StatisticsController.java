@@ -8,8 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.*;
 
-import com.web.statistics.Statistics;
-import com.web.scheduler.MainScheduler;
+import com.web.helpers.Singleton;
+import com.web.statisticsmodel.StatisticsModel;
+import java.util.*;
 
 @WebServlet("/getStatsHttp")
 public class StatisticsController extends HttpServlet {
@@ -31,15 +32,15 @@ public class StatisticsController extends HttpServlet {
 		JsonElement jsonElement = new JsonParser().parse(jb.toString());
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-		String name = jsonObject.get("name").getAsString();
-		System.out.println(name);
-
-		//StatisticsModel model = Statistics.getSystemData();
-
-		MainScheduler scheduler = new MainScheduler();
-		String result = scheduler.getStats(name);
+		String fromTimestamp = jsonObject.get("fromTimestamp").getAsString();
+		String toTimestamp = jsonObject.get("toTimestamp").getAsString();
 		
-		String jsonObj = new Gson().toJson(result);
+		// check name in separte DB table and separte servlet to validate user
+		// send stats from here
+
+		ArrayList<StatisticsModel> list = Singleton.getStatisticsDao().getData(fromTimestamp,toTimestamp);
+				
+		String jsonObj = new Gson().toJson(list);
 		System.out.println(jsonObj);
 		response.getWriter().write(jsonObj);
 	}

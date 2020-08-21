@@ -1,17 +1,17 @@
 package com.web.helpers;
 
-import com.web.websocket.WebsocketService;
+import com.web.statisticsdao.StatisticsDao;
 import com.web.scheduler.SchedulerTask;
+
 public class Singleton {
 
-	private static WebsocketService instance = new WebsocketService();
-	private static SchedulerTask task = new SchedulerTask();
+	private static SchedulerTask taskObj = new SchedulerTask();
+	private static StatisticsDao daoObj = new StatisticsDao();
 
-	public static WebsocketService getWebsocketService() {
-		return instance;
+	public static StatisticsDao getStatisticsDao() {
+		return daoObj;
 	}
-
 	public static SchedulerTask getSchedulerTask() {
-		return task;
+		return taskObj;
 	}
 }
