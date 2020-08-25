@@ -54,7 +54,7 @@ void storeAndSendData() {
 		} else {
             cout<<"Socket is not connected so Store it"<<endl;
         }
-        this_thread::sleep_for(600s);
+        this_thread::sleep_for(10s);
 	}
 }
 void sendStoredData() {

@@ -13,7 +13,7 @@ public class MainScheduler{
 		task.start();
 	}
 	public void stopScheduler() {
+		task.stop();
 		Singleton.getStatisticsDao().closeConnection();
-		task.stop();	
 	}
 }

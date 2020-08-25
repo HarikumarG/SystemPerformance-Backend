@@ -1,4 +1,4 @@
-package com.web.statisticscontroller;
+package com.web.alert;
 
 import java.io.*;
 import javax.servlet.ServletException;
@@ -8,15 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.*;
 
-import com.web.helpers.Singleton;
-import com.web.statisticsmodel.StatisticsModel;
-import java.util.*;
-
-@WebServlet("/getStatsHttp")
-public class StatisticsController extends HttpServlet {
+@WebServlet("/alertUpdate")
+public class AlertController extends HttpServlet{
 
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
-		
+
 		StringBuffer jb = new StringBuffer();
 		String line = null;
 
@@ -26,19 +22,21 @@ public class StatisticsController extends HttpServlet {
 				jb.append(line);
 			}
 		} catch(Exception e) {
-			System.out.println("Error in reading request body from StatisticsController "+e.getMessage());
+			System.out.println("Error in reading request body from AlertController "+e.getMessage());
 		}
 
 		JsonElement jsonElement = new JsonParser().parse(jb.toString());
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-		String fromTimestamp = jsonObject.get("fromTimestamp").getAsString();
-		String toTimestamp = jsonObject.get("toTimestamp").getAsString();
-		
-		ArrayList<StatisticsModel> list = Singleton.getStatisticsDao().getData(fromTimestamp,toTimestamp);
-				
-		String jsonObj = new Gson().toJson(list);
-		System.out.println(jsonObj);
+		String notify = jsonObject.get("AlertNotify").getAsString();
+		String ramUsage = jsonObject.get("RAMUsage").getAsString();
+		String cpuUsage = jsonObject.get("CPUUsage").getAsString();
+
+		AlertUtil.RAMUsage = Float.parseFloat(ramUsage);
+		AlertUtil.CPUUsage = Integer.parseInt(cpuUsage);
+		AlertUtil.sendNotify = notify.equals("true") ? true : false;
+
+		String jsonObj = new Gson().toJson("Alert Updated");
 		response.getWriter().write(jsonObj);
 	}
 }
