@@ -4,10 +4,12 @@ import com.web.helpers.Singleton;
 import java.net.*;
 import java.io.*;
 import com.web.alert.AlertCheck;
+import java.util.*;
 
 public class SchedulerTask extends Thread{
 
 	AlertCheck alertCheck = new AlertCheck();
+	public HashSet<Socket> sockets = new HashSet<Socket>();
 
 	public void run() {
 		while(true) {
@@ -16,6 +18,7 @@ public class SchedulerTask extends Thread{
 				System.out.println("Waiting for Socket Connection..");
 				ServerSocket serversocket = new ServerSocket(8081);
 				Socket socket = serversocket.accept();
+				sockets.add(socket);
 				System.out.println("Socket connection established");
 				BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				int c = 0;
@@ -30,6 +33,7 @@ public class SchedulerTask extends Thread{
 				}
 				serversocket.close();
 				System.out.println("Socket is closed");
+				sockets.remove(socket);
 			} catch(SocketException e) {
 				System.out.println("Oops! Socket is closed");
 			} catch(Exception e) {

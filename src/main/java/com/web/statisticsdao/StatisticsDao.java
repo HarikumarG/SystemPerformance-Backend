@@ -11,7 +11,7 @@ import java.util.*;
 
 public class StatisticsDao {
 
-	private static Connection conn;
+	private Connection conn;
 
 	public void closeConnection() {
 		try {

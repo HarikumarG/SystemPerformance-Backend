@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.*;
 import java.util.*;
 
+import com.web.alert.AlertUtil;
+
 @WebServlet("/getAlertSetting")
-public class GetSetting extends HttpServlet {
+public class GetSettingController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
 
@@ -23,7 +25,7 @@ public class GetSetting extends HttpServlet {
 				jb.append(line);
 			}
 		} catch(Exception e) {
-			System.out.println("Error in reading request body from AlertController "+e.getMessage());
+			System.out.println("Error in reading request body from GetSettingController "+e.getMessage());
 		}
 
 		JsonElement jsonElement = new JsonParser().parse(jb.toString());

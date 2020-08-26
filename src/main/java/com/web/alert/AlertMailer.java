@@ -14,13 +14,13 @@ import javax.mail.PasswordAuthentication;
 
 public class AlertMailer {
 
-	private static FileInputStream mailerPropsFile;
-	private static Properties mailerProps;
+	private FileInputStream mailerPropsFile;
+	private Properties mailerProps;
 
-	private static FileInputStream mailIdFile;
-	private static Properties mailIdList;
+	private FileInputStream mailIdFile;
+	private Properties mailIdList;
 
-	private static String recipients = "";
+	private String recipients = "";
 
 	public AlertMailer() {
 		try {
