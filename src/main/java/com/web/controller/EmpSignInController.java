@@ -1,4 +1,4 @@
-package com.web.alert;
+package com.web.controller;
 
 import java.io.*;
 import javax.servlet.ServletException;
@@ -7,12 +7,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.*;
-import java.util.*;
 
-import com.web.alert.AlertUtil;
+import com.web.helpers.Singleton;
+import com.web.pojo.EmployeeSignIn;
 
-@WebServlet("/getAlertSetting")
-public class GetSettingController extends HttpServlet {
+@WebServlet("/empSignIn")
+public class EmpSignInController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
 
@@ -25,22 +25,19 @@ public class GetSettingController extends HttpServlet {
 				jb.append(line);
 			}
 		} catch(Exception e) {
-			System.out.println("Error in reading request body from GetSettingController "+e.getMessage());
+			System.out.println("Error in reading request body from EmpSignInController "+e.getMessage());
 		}
 
 		JsonElement jsonElement = new JsonParser().parse(jb.toString());
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-		String name = jsonObject.get("name").getAsString();
-		System.out.println("Setting - UserName "+name);
+		EmployeeSignIn details = new Gson().fromJson(jsonObject.toString(),EmployeeSignIn.class);
 
-		HashMap<String,String> setting = new HashMap<String,String>();
-		setting.put("sendNotify",String.valueOf(AlertUtil.sendNotify));
-		setting.put("cpuUsage",String.valueOf((AlertUtil.CPUUsage < 0) ? "" : AlertUtil.CPUUsage));
-		setting.put("ramUsage",String.valueOf((AlertUtil.RAMUsage < 0) ? "" : AlertUtil.RAMUsage));
+		boolean check = Singleton.getEmployeeDao().verifyCredentials(details);
 
-		String jsonObj = new Gson().toJson(setting);
+		String resp = (check == true) ? "SUCCESS" : "FAILURE";
+
+		String jsonObj = new Gson().toJson(resp);
 		response.getWriter().write(jsonObj);
-		
 	}
 }

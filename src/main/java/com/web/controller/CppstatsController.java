@@ -1,4 +1,4 @@
-package com.web.cppcommunicate;
+package com.web.controller;
 
 import java.io.*;
 import javax.servlet.ServletException;
@@ -9,9 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.*;
 
 import com.web.helpers.Singleton;
+import com.web.service.AlertService;
 
-@WebServlet("/checkLiveStats")
-public class CheckLivestatsController extends HttpServlet {
+@WebServlet("/storeStats")
+public class CppstatsController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
 
@@ -24,19 +25,19 @@ public class CheckLivestatsController extends HttpServlet {
 				jb.append(line);
 			}
 		} catch(Exception e) {
-			System.out.println("Error in reading request body from CheckLivestatsController "+e.getMessage());
+			System.out.println("Error in reading request body from CppstatsController "+e.getMessage());
 		}
-
 		JsonElement jsonElement = new JsonParser().parse(jb.toString());
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
-
-		String name = jsonObject.get("name").getAsString();
-		System.out.println("Check Live Stats - UserName "+name);
-
-		String res = Singleton.getSchedulerTask().sockets.size() == 1 ? "true" : "false";
-
-		String jsonObj = new Gson().toJson(res);
+		String data = jsonObject.get("data").getAsString();
+		System.out.println(data);
+		String[] stats = data.split("/",0);
+		boolean check = Singleton.getStatisticsDao().storeData(stats) ? true : false;
+		AlertService mailservice = new AlertService(stats);
+		mailservice.start();
+		if(!check)
+			System.out.println("Data Not Stored");
+		String jsonObj = new Gson().toJson("SUCCESS");
 		response.getWriter().write(jsonObj);
-
 	}
 }

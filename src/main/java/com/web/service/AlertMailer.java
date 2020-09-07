@@ -1,4 +1,4 @@
-package com.web.alert;
+package com.web.service;
 
 import java.util.*;
 import java.io.*;
@@ -43,20 +43,19 @@ public class AlertMailer {
 		}
 	}
 
-	private String emailText(String timestamp,String cpuUsage,String ramUsage) {
-
+	private String emailText(String systemName,String timestamp,String maxCpu,String cpuUsage,String maxRam,String ramUsage) {
 		String text = "";
 		if(!cpuUsage.equals("") && !ramUsage.equals("")) {
-			text = "Hello,\nAn important notification.\nAt "+timestamp+" in your machine the Cpu Usage and RAM Usage has been exceeded the given limit.\nCpu Usage = "+cpuUsage+"\nRAM Usage = "+ramUsage+"\nKindly have a look on that.\nThanks..";
+			text = "Hello,\nAn important notification.\nAt "+timestamp+" in "+systemName+" machine the Cpu Usage and RAM Usage has been exceeded the given limit.\nCpu Usage = "+cpuUsage+" - MaxCpu Usage = "+maxCpu+" \nRAM Usage = "+ramUsage+" - MaxRAM Usage = "+maxRam+"\nKindly have a look on that.\nThanks..";
 		} else if(!cpuUsage.equals("")) {
-			text = "Hello,\nAn important notification.\nAt "+timestamp+" in your machine the Cpu Usage has been exceeded the given limit.\nCpu Usage = "+cpuUsage+"\nKindly have a look on that.\nThanks..";
+			text = "Hello,\nAn important notification.\nAt "+timestamp+" in "+systemName+" machine the Cpu Usage has been exceeded the given limit.\nCpu Usage = "+cpuUsage+" - MaxCpu Usage = "+maxCpu+"\nKindly have a look on that.\nThanks..";
 		} else if(!ramUsage.equals("")) {
-			text = "Hello,\nAn important notification.\nAt "+timestamp+" in your machine the RAM Usage has been exceeded the given limit.\nRAM Usage = "+ramUsage+"\nKindly have a look on that.\nThanks..";
+			text = "Hello,\nAn important notification.\nAt "+timestamp+" in "+systemName+" machine the RAM Usage has been exceeded the given limit.\nRAM Usage = "+ramUsage+" - MaxRAM Usage = "+maxRam+"\nKindly have a look on that.\nThanks..";
 		}
 		return text;
 	}
 
-	public void sendMail(String timestamp,String cpuUsage,String ramUsage) {
+	public void sendMail(String systemName,String timestamp,String maxCpu,String cpuUsage,String maxRam,String ramUsage) {
 
 		Properties props = new Properties();
 		props.put("mail.smtp.auth","true");
@@ -73,7 +72,7 @@ public class AlertMailer {
 			message.setFrom(new InternetAddress(mailerProps.getProperty("mailid").toString()));
 			message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(recipients));
 			message.setSubject("Limit Exceeded Alert");
-			String text = emailText(timestamp,cpuUsage,ramUsage);
+			String text = emailText(systemName,timestamp,maxCpu,cpuUsage,maxRam,ramUsage);
 			message.setText(text);
 			Transport.send(message);
 			System.out.println("Mail sent to all recipients successfully");

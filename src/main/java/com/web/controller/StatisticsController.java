@@ -1,4 +1,4 @@
-package com.web.statisticscontroller;
+package com.web.controller;
 
 import java.io.*;
 import javax.servlet.ServletException;
@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.*;
 
 import com.web.helpers.Singleton;
-import com.web.statisticsmodel.StatisticsModel;
+import com.web.pojo.Statistics;
 import java.util.*;
 
 @WebServlet("/getStatsHttp")
@@ -32,10 +32,11 @@ public class StatisticsController extends HttpServlet {
 		JsonElement jsonElement = new JsonParser().parse(jb.toString());
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
 
+		String systemName = jsonObject.get("SystemName").getAsString();
 		String fromTimestamp = jsonObject.get("fromTimestamp").getAsString();
 		String toTimestamp = jsonObject.get("toTimestamp").getAsString();
 		
-		ArrayList<StatisticsModel> list = Singleton.getStatisticsDao().getData(fromTimestamp,toTimestamp);
+		ArrayList<Statistics> list = Singleton.getStatisticsDao().getData(systemName,fromTimestamp,toTimestamp);
 				
 		String jsonObj = new Gson().toJson(list);
 		System.out.println(jsonObj);

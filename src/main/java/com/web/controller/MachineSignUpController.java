@@ -1,4 +1,4 @@
-package com.web.alert;
+package com.web.controller;
 
 import java.io.*;
 import javax.servlet.ServletException;
@@ -8,8 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.*;
 
-@WebServlet("/alertUpdate")
-public class AlertController extends HttpServlet{
+import com.web.helpers.Singleton;
+
+
+@WebServlet("/machineSignUp")
+public class MachineSignUpController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
 
@@ -22,21 +25,20 @@ public class AlertController extends HttpServlet{
 				jb.append(line);
 			}
 		} catch(Exception e) {
-			System.out.println("Error in reading request body from AlertController "+e.getMessage());
+			System.out.println("Error in reading request body from MachineSignUpController "+e.getMessage());
 		}
 
 		JsonElement jsonElement = new JsonParser().parse(jb.toString());
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-		String notify = jsonObject.get("AlertNotify").getAsString();
-		String ramUsage = jsonObject.get("RAMUsage").getAsString();
-		String cpuUsage = jsonObject.get("CPUUsage").getAsString();
+		String systemName = jsonObject.get("SystemName").getAsString();
+		String uuid = jsonObject.get("UUID").getAsString();
+		
+		boolean check = Singleton.getMachineDao().storeMachineCredentials(systemName,uuid);
 
-		AlertUtil.RAMUsage = Float.parseFloat(ramUsage);
-		AlertUtil.CPUUsage = Integer.parseInt(cpuUsage);
-		AlertUtil.sendNotify = notify.equals("true") ? true : false;
+		String resp = (check == true) ? "SUCCESS" : "FAILURE";
 
-		String jsonObj = new Gson().toJson("Alert Updated");
+		String jsonObj = new Gson().toJson(resp);
 		response.getWriter().write(jsonObj);
 	}
 }

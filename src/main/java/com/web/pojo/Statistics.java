@@ -1,12 +1,16 @@
-package com.web.statisticsmodel;
+package com.web.pojo;
 
-public class StatisticsModel {
+public class Statistics {
 
+	private String systemname;
 	private String timestamp;
 	private float totalram;
 	private float usedram;
 	private int cpuusage;
 
+	public void setSystemname(String systemname) {
+		this.systemname = systemname;
+	}
 	public void setTimestamp(String timestamp) {
 		this.timestamp = timestamp;
 	}
@@ -20,6 +24,9 @@ public class StatisticsModel {
 		this.cpuusage = cpuusage;
 	}
 
+	public String getSystemname() {
+		return systemname;
+	}
 	public String getTimestamp() {
 		return timestamp;
 	}
