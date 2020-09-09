@@ -33,8 +33,10 @@ public class CppstatsController extends HttpServlet {
 		System.out.println(data);
 		String[] stats = data.split("/",0);
 		boolean check = Singleton.getStatisticsDao().storeData(stats) ? true : false;
-		AlertService mailservice = new AlertService(stats);
-		mailservice.start();
+		if(check) {
+			AlertService mailservice = new AlertService(stats);
+			mailservice.start();
+		}
 		if(!check)
 			System.out.println("Data Not Stored");
 		String jsonObj = new Gson().toJson("SUCCESS");

@@ -41,7 +41,7 @@ public class StatisticsDao {
 		try {
 			Statement stmt = (Statement) conn.createStatement();
 			//String url = "select * from Performance where TimeStamp >= '"+fromTimestamp+"' and TimeStamp <= '"+toTimestamp+"'";
-			String url = "select * from Performance where TimeStamp >= '"+fromTimestamp+"' and TimeStamp <= '"+toTimestamp+"' and UUID in (select UUID from Machine where SystemName='"+systemName+"')";
+			String url = "select * from Performance where TimeStamp >= '"+fromTimestamp+"' and TimeStamp <= '"+toTimestamp+"' and BINARY UUID in (select UUID from Machine where BINARY SystemName='"+systemName+"')";
 			ResultSet rs = stmt.executeQuery(url);
 			while(rs.next() != false) {
 				Statistics model = new Statistics();

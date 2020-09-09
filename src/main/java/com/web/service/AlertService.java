@@ -13,7 +13,7 @@ public class AlertService extends Thread {
 	}
 	public void run() {
 		String uuid = stats[0];
-		HashMap<String,String> alertData = Singleton.getMachineDao().alertConfig(uuid);
+		HashMap<String,String> alertData = Singleton.getMachineDao().getAlertConfig(uuid);
 		if(alertData.size() != 0) {
 			int maxCpu = Integer.parseInt(alertData.get("MaxCpuUsage"));
 			float maxRam = Float.parseFloat(alertData.get("MaxRAMUsage"));
@@ -28,6 +28,7 @@ public class AlertService extends Thread {
 				Singleton.getMailer().sendMail(systemName,timestamp,"","",String.valueOf(maxRam),String.valueOf(usedRam));
 			else if(usedCpu > maxCpu)
 				Singleton.getMailer().sendMail(systemName,timestamp,String.valueOf(maxCpu),String.valueOf(usedCpu),"","");
+			System.out.println("Mail sent to all recipients successfully");			
 		}
 	}
 

@@ -39,7 +39,6 @@ public class StatisticsController extends HttpServlet {
 		ArrayList<Statistics> list = Singleton.getStatisticsDao().getData(systemName,fromTimestamp,toTimestamp);
 				
 		String jsonObj = new Gson().toJson(list);
-		System.out.println(jsonObj);
 		response.getWriter().write(jsonObj);
 	}
 }

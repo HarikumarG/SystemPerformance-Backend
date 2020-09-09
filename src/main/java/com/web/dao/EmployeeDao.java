@@ -26,7 +26,7 @@ public class EmployeeDao {
 	public boolean verifyCredentials(EmployeeSignIn details) {
 		try {
 			Statement stmt = (Statement) conn.createStatement();
-			String url = "select * from Employees where EmpID='"+details.getEmpid()+"'and Password='"+details.getPassword()+"'";
+			String url = "select * from Employees where BINARY EmpID='"+details.getEmpid()+"'and BINARY Password='"+details.getPassword()+"'";
 			ResultSet rs = stmt.executeQuery(url);
 			if(rs.next()) {
 				return true;
@@ -56,7 +56,7 @@ public class EmployeeDao {
 	public boolean verifySettingsAccess(String empId,String password) {
 		try {
 			Statement stmt = (Statement) conn.createStatement();
-			String url = "select * from Employees where EmpID='"+empId+"'and Password='"+password+"' and Designation='Team Head'";
+			String url = "select * from Employees where BINARY EmpID='"+empId+"'and BINARY Password='"+password+"' and BINARY Designation='Team Head'";
 			ResultSet rs = stmt.executeQuery(url);
 			if(rs.next()) {
 				return true;

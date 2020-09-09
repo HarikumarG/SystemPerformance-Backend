@@ -75,7 +75,6 @@ public class AlertMailer {
 			String text = emailText(systemName,timestamp,maxCpu,cpuUsage,maxRam,ramUsage);
 			message.setText(text);
 			Transport.send(message);
-			System.out.println("Mail sent to all recipients successfully");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

@@ -10,6 +10,7 @@ import java.util.*;
 
 import com.web.pojo.EmployeeSignIn;
 import com.web.pojo.EmployeeSignUp;
+import com.web.pojo.MachineDetails;
 
 import com.web.service.ConfigService;
 
@@ -24,6 +25,25 @@ public class MachineDao {
 			conn = (Connection) DriverManager.getConnection(url,"root","");
 		} catch(Exception e) {
 			System.out.println("Exception in MachineDao constructor "+e.getMessage());
+		}
+	}
+
+	public ArrayList<MachineDetails> getAllMachineDetails() {
+		ArrayList<MachineDetails> allDetails = new ArrayList<MachineDetails>();
+		try {
+			Statement stmt = (Statement) conn.createStatement();
+			String url = "select * from Machine";
+			ResultSet rs = stmt.executeQuery(url);
+			while(rs.next()) {
+				MachineDetails details = new MachineDetails(); 
+				details.setSystemname(rs.getString("SystemName"));
+				details.setUuid(rs.getString("UUID"));
+				allDetails.add(details);
+			}
+			return allDetails;
+		} catch (Exception e) {
+			System.out.println("Exception in MachineDao getAllMachineDetails method "+e.getMessage());
+			return allDetails;
 		}
 	}
 
@@ -45,11 +65,11 @@ public class MachineDao {
 	public boolean updateAlertConfig(String systemName,String ramUsage,String cpuUsage,String notify) {
 		try {
 			Statement stmt = (Statement) conn.createStatement();
-			String url = "select Config from Machine where SystemName='"+systemName+"'";
+			String url = "select Config from Machine where BINARY SystemName='"+systemName+"'";
 			ResultSet rs = stmt.executeQuery(url);
 			if(rs.next()) {
 				String config = ConfigService.updateConfig(rs.getString("Config"),notify,0);
-				String u = "update Machine set Config='"+config+"',MaxCpuUsage='"+cpuUsage+"',MaxUsedRAM='"+ramUsage+"' where SystemName='"+systemName+"'";
+				String u = "update Machine set Config='"+config+"',MaxCpuUsage='"+cpuUsage+"',MaxUsedRAM='"+ramUsage+"' where BINARY SystemName='"+systemName+"'";
 				int rowNum = stmt.executeUpdate(u);
 				if(rowNum > 0)
 					return true;
@@ -65,14 +85,14 @@ public class MachineDao {
 		HashMap<String,HashMap<String,String>> config = new HashMap<String,HashMap<String,String>>();
 		try {
 			Statement stmt = (Statement) conn.createStatement();
-			String url = "select * from Machine where SystemName='"+systemName+"'";
+			String url = "select * from Machine where BINARY SystemName='"+systemName+"'";
 			ResultSet rs = stmt.executeQuery(url);
 			if(rs.next()) {
 				config.put("Alert",new HashMap<String,String>());
 				String notify = String.valueOf(ConfigService.getToggleValue(rs.getString("Config"),0));
 				config.get("Alert").put("ToggleNotify",notify);
-				config.get("Alert").put("CpuUsage",rs.getString("MaxCpuUsage"));
-				config.get("Alert").put("RAMUsage",rs.getString("MaxUsedRAM"));
+				config.get("Alert").put("MaxCpuUsage",rs.getString("MaxCpuUsage"));
+				config.get("Alert").put("MaxRAMUsage",rs.getString("MaxUsedRAM"));
 			}
 			return config;
 		} catch (Exception e) {
@@ -81,11 +101,11 @@ public class MachineDao {
 		}
 	}
 
-	public HashMap<String,String> alertConfig(String uuid) {
+	public HashMap<String,String> getAlertConfig(String uuid) {
 		HashMap<String,String> alertData = new HashMap<String,String>();
 		try {
 			Statement stmt = (Statement) conn.createStatement();
-			String url = "select * from Machine where UUID='"+uuid+"'";
+			String url = "select * from Machine where BINARY UUID='"+uuid+"'";
 			ResultSet rs = stmt.executeQuery(url);
 			if(rs.next()) {
 				boolean check = ConfigService.getToggleValue(rs.getString("Config"),0);

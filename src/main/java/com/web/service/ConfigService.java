@@ -6,7 +6,7 @@ public class ConfigService {
 		String updated = "";
 		int config = Integer.parseInt(conf);
 		int pow = (int) Math.pow(2,id);
-		if(notify.equals("TRUE")) {
+		if(notify.equals("true")) {
 			int and = config & pow;
 			if(and == 0) {
 				int val = config | pow;
@@ -14,7 +14,7 @@ public class ConfigService {
 			} else if(and == 1) {
 				updated = conf;
 			}
-		} else if(notify.equals("FALSE")){
+		} else if(notify.equals("false")){
 			int and = config & pow;
 			if(and == 1) {
 				int val = config ^ pow;

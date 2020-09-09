@@ -1,4 +1,4 @@
-package com.web.alert;
+package com.web.controller;
 
 import java.io.*;
 import javax.servlet.ServletException;
@@ -10,12 +10,12 @@ import com.google.gson.*;
 import java.util.*;
 
 import com.web.helpers.Singleton;
+import com.web.pojo.MachineDetails;
 
-@WebServlet("/getAllConfig")
-public class GetSettingController extends HttpServlet {
+@WebServlet("/getAllMachine")
+public class GetMachineController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
-
 		StringBuffer jb = new StringBuffer();
 		String line = null;
 
@@ -25,17 +25,18 @@ public class GetSettingController extends HttpServlet {
 				jb.append(line);
 			}
 		} catch(Exception e) {
-			System.out.println("Error in reading request body from GetSettingController "+e.getMessage());
+			System.out.println("Error in reading request body from GetMachineController "+e.getMessage());
 		}
 
 		JsonElement jsonElement = new JsonParser().parse(jb.toString());
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-		String systemName = jsonObject.get("SystemName").getAsString();
-		
-		HashMap<String,HashMap<String,String>> config = Singleton.getMachineDao().getAllConfig(systemName);
+		String empid = jsonObject.get("EmpID").getAsString();
+		String empName = jsonObject.get("EmpName").getAsString();
 
-		String jsonObj = new Gson().toJson(config);
+		ArrayList<MachineDetails> machineList = Singleton.getMachineDao().getAllMachineDetails();
+
+		String jsonObj = new Gson().toJson(machineList);
 		response.getWriter().write(jsonObj);
 	}
 }

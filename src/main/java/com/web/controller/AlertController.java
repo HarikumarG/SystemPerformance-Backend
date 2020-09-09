@@ -33,7 +33,7 @@ public class AlertController extends HttpServlet{
 		String empid = jsonObject.get("EmpID").getAsString();
 		String password = jsonObject.get("Password").getAsString();
 		String systemName = jsonObject.get("SystemName").getAsString();
-		String alertEnable = jsonObject.get("Notify").getAsString();
+		String alertEnable = jsonObject.get("AlertNotify").getAsString();
 		String ramUsage = jsonObject.get("MaxRAMUsage").getAsString();
 		String cpuUsage = jsonObject.get("MaxCPUUsage").getAsString();
 
