@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.*;
+import java.util.*;
 
 import com.web.helpers.Singleton;
 import com.web.pojo.EmployeeSignIn;
@@ -33,11 +34,15 @@ public class EmpSignInController extends HttpServlet {
 
 		EmployeeSignIn details = new Gson().fromJson(jsonObject.toString(),EmployeeSignIn.class);
 
-		boolean check = Singleton.getEmployeeDao().verifyCredentials(details);
+		String empName = Singleton.getEmployeeDao().verifyCredentials(details);
 
-		String resp = (check == true) ? "SUCCESS" : "FAILURE";
+		String resp = (empName != null) ? "SUCCESS" : "FAILURE";
 
-		String jsonObj = new Gson().toJson(resp);
+		HashMap<String,String> responseData = new HashMap<String,String>();
+		responseData.put("Status",resp);
+		responseData.put("EmpName",empName);
+
+		String jsonObj = new Gson().toJson(responseData);
 		response.getWriter().write(jsonObj);
 	}
 }

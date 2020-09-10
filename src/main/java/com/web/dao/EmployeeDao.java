@@ -23,18 +23,18 @@ public class EmployeeDao {
 		}
 	}
 
-	public boolean verifyCredentials(EmployeeSignIn details) {
+	public String verifyCredentials(EmployeeSignIn details) {
 		try {
 			Statement stmt = (Statement) conn.createStatement();
 			String url = "select * from Employees where BINARY EmpID='"+details.getEmpid()+"'and BINARY Password='"+details.getPassword()+"'";
 			ResultSet rs = stmt.executeQuery(url);
 			if(rs.next()) {
-				return true;
+				return rs.getString("Name");
 			}
-			return false;
+			return null;
 		} catch(Exception e) {
 			System.out.println("Exception in EmployeeDao verifyCredentials method "+e.getMessage());
-			return false;
+			return null;
 		}
 	}
 
