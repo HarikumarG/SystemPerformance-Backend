@@ -6,7 +6,8 @@
 using namespace std;
 //windows wmic csproduct get UUID
 //ubuntu sudo dmidecode -s system-uuid
-//93C21FDA-BF58-E311-A970-201A0687E7C5
+//SystemName - SYSTEM-1 
+//UUID - 93C21FDA-BF58-E311-A970-201A0687E7C5
 bool connected = true;
 time_t rawtime;
 char dateChar[11];

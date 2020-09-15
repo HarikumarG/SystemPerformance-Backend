@@ -16,8 +16,8 @@ public class EmployeeDao {
 	public EmployeeDao() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			String url = "jdbc:mysql://localhost:3306/systemperformance";
-			conn = (Connection) DriverManager.getConnection(url,"root","");
+			String url = "jdbc:mysql://localhost:3306/system_performance";
+			conn = (Connection) DriverManager.getConnection(url,"hari","1234");
 		} catch(Exception e) {
 			System.out.println("Exception in EmployeeDao constructor "+e.getMessage());
 		}
