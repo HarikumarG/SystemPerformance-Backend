@@ -51,12 +51,12 @@
         <artifactId>javax.mail</artifactId>
         <version>1.6.0</version>
     </dependency>
-<!--     <dependency>
+    <dependency>
         <groupId>org.elasticsearch.client</groupId>
         <artifactId>elasticsearch-rest-high-level-client</artifactId>
-        <version>8.0.0</version>
+        <version>7.9.1</version>
     </dependency>
- -->
+    
   </dependencies>
   <build>
     <finalName>SystemPerformance-Backend</finalName>

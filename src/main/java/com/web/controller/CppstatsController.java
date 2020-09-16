@@ -32,6 +32,10 @@ public class CppstatsController extends HttpServlet {
 		String data = jsonObject.get("data").getAsString();
 		System.out.println(data);
 		String[] stats = data.split("/",0);
+		boolean esCheck = Singleton.getElasticSearchDao().storeData(stats) ? true : false;
+		if(!esCheck) {
+			System.out.println("Data Not stored in ES");
+		}
 		boolean check = Singleton.getStatisticsDao().storeData(stats) ? true : false;
 		if(check) {
 			AlertService mailservice = new AlertService(stats);
