@@ -5,6 +5,8 @@ This is an java project developed using plain java and servlet which is the back
 This application has a cpp service which constantly gets the system's RAM Usage,CPU Usage and sends the data (through http) -> java -> database.
 From the front-end the user can able to view the statistics as a chart view.
 
+Have a look on `Architecture Diagram.png` in this repo for clear understanding.
+
 The master branch is the old code which is like a prototype with only core logic (java to cpp connection is by JNI (Java Native Interface)).
 
 The masterv1 branch is the updated code with all the features included (java to cpp connection is through Http request).

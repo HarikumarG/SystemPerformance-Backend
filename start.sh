@@ -1,4 +1,4 @@
-cp target/SystemPerformance-Backend.war /opt/tomcat/webapps
+cp target/SystemPerformance-Backend.war /opt/tomcat9/webapps
 cd ~;
-cd /opt/tomcat/bin;
+cd /opt/tomcat9/bin;
 ./catalina.sh run;

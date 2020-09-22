@@ -24,11 +24,11 @@ public class AlertMailer {
 
 	public AlertMailer() {
 		try {
-			mailerPropsFile = new FileInputStream("/home/harikumar_g/Documents/projects/SystemPerformance-Backend/src/main/resources/Mailer.properties");
+			mailerPropsFile = new FileInputStream("/home/uh/Documents/projects/system-performance/SystemPerformance-Backend/src/main/resources/Mailer.properties");
 			mailerProps = new Properties();
 			mailerProps.load(mailerPropsFile);
 
-			mailIdFile = new FileInputStream("/home/harikumar_g/Documents/projects/SystemPerformance-Backend/src/main/resources/AlertMailId.properties");
+			mailIdFile = new FileInputStream("/home/uh/Documents/projects/system-performance/SystemPerformance-Backend/src/main/resources/AlertMailId.properties");
 			mailIdList = new Properties();
 			mailIdList.load(mailIdFile);
 

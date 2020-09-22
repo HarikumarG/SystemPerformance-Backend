@@ -17,7 +17,7 @@ public class StatisticsDao {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			String url = "jdbc:mysql://localhost:3306/system_performance";
-			conn = (Connection) DriverManager.getConnection(url,"hari","1234");
+			conn = (Connection) DriverManager.getConnection(url,"root","1234");
 		} catch(Exception e) {
 			System.out.println("Exception in StatisticsDao constructor "+e.getMessage());
 		}
