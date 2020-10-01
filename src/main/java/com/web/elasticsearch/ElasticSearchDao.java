@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.io.*;
 import org.apache.http.HttpHost;
 
+import com.web.pojo.Statistics;
+
 public class ElasticSearchDao {
 
 	private RestHighLevelClient client;
@@ -27,13 +29,13 @@ public class ElasticSearchDao {
 	}
 	public boolean storeData(String stats[]) {
 		try {
-			//Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stats[4]);
+			Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(stats[4]);
 			HashMap<String,Object> dataMap = new HashMap<String,Object>();
-			dataMap.put("UUID",stats[0]);
-			dataMap.put("TotalRAM",stats[1]);
-			dataMap.put("UsedRAM",stats[2]);
-			dataMap.put("CpuUsage",stats[3]);
-			dataMap.put("TimeStamp",stats[4]);
+			dataMap.put("uuid",stats[0]);
+			dataMap.put("totalram",stats[1]);
+			dataMap.put("usedram",stats[2]);
+			dataMap.put("cpuusage",stats[3]);
+			dataMap.put("timestamp",date);
 			IndexRequest indexRequest = new IndexRequest("system_performance");
 			indexRequest.id(getRandomId()); 
 			indexRequest.source(dataMap);

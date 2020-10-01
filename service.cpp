@@ -1,18 +1,22 @@
+//windows wmic csproduct get UUID
+//ubuntu sudo dmidecode -s system-uuid
+//SystemName - SYSTEM-1 
+//UUID - 93C21FDA-BF58-E311-A970-201A0687E7C5
+// g++ -std=c++14 service.cpp -lboost_system -lcrypto -lssl -lcpprest -pthread -lcurl
+
+
+#include <cpprest/http_listener.h>
+#include <cpprest/json.h>
+using namespace web;
+using namespace web::http;
+using namespace web::http::experimental::listener;
 #include <bits/stdc++.h>
 #include <sys/sysinfo.h>
 #include <curl/curl.h>
 #include <thread>
 #include <time.h>
 using namespace std;
-//windows wmic csproduct get UUID
-//ubuntu sudo dmidecode -s system-uuid
-//SystemName - SYSTEM-1 
-//UUID - 93C21FDA-BF58-E311-A970-201A0687E7C5
-bool connected = true;
-time_t rawtime;
-char dateChar[11];
-char timeChar[9];
-struct tm *timeinfo;
+
 string uuid = "93C21FDA-BF58-E311-A970-201A0687E7C5";
 
 void PostJson(string data) {
@@ -56,7 +60,41 @@ void PostJson(string data) {
         exit(0);
     }
 }
+void deleteContentsOfFile() {
+    fstream file;
+    file.open("data.txt",ios::out | ios::trunc);
+    if(file.is_open()) {
+        file.close();
+    } else {
+        cout<<"File opening error in deleteContentsOfFile method"<<endl;
+        file.close();
+    }
+}
+void sendStoredData() {
+    fstream file;
+    file.open("data.txt",ios::in);
+    if(file.is_open()) {
+        string line;
+        while(getline(file,line)) {
+            if(line != "")
+                PostJson(line);
+        }
+    } else {
+        cout<<"File opening error in sendStoredData method"<<endl;
+    }
+    file.close();
+}
+bool connectionInit() {
+    int connect = system("curl -I http://localhost:8080/SystemPerformance-Backend/storeStats");
+    if(connect == 0)
+        return true;
+    return false;
+}
 string getStats() {
+    time_t rawtime;
+    char dateChar[11];
+    char timeChar[9];
+    struct tm *timeinfo;
     struct sysinfo si;
     if(sysinfo(&si) != -1) {
         time(&rawtime);
@@ -79,35 +117,33 @@ string getStats() {
     }
     return "";
 }
-void sendStoredData() {
-    fstream file;
-    file.open("data.txt",ios::in);
-    if(file.is_open()) {
-        string line;
-        while(getline(file,line)) {
-            PostJson(line);
-        }
-    } else {
-        cout<<"File opening error"<<endl;
-    }
-    file.close();
-    cout<<"Stored data sent"<<endl;
+void handle_get(http_request request) {
+    auto response = json::value::object();
+    string data = getStats();
+    response["data"] = json::value::string(data);
+    request.reply(status_codes::OK, response);
 }
-void connectionInit() {
+void sendData() {
     while(true) {
-        connected = false;
-        int connect = system("curl -I http://localhost:8080/SystemPerformance-Backend/storeStats");
-        if(connect == 0)
-            break;
-        this_thread::sleep_for(5s);
+        string data = getStats();
+        if(!connectionInit()) {
+            fstream file;
+            file.open("data.txt",ios::out | ios::in | ios::app);
+            if(file.is_open()) {
+                file << data;
+                file << "\n";
+            } else {
+                cout<<"File opening error in sendData method"<<endl;
+            }
+            file.close();
+        } else {
+            sendStoredData();
+            deleteContentsOfFile();
+            if(data != "")
+                PostJson(data);
+        }
+        this_thread::sleep_for(300s);
     }
-    sendStoredData();
-    connected = true;
-}
-void deleteContentsOfFile() {
-    fstream file;
-    file.open("data.txt",ios::out | ios::trunc);
-    file.close();
 }
 void curlInitialize() {
     
@@ -121,30 +157,23 @@ void curlInitialize() {
         exit(0);
     }
 }
-void storeAndSendData() {
-    deleteContentsOfFile();
-    fstream file;
-    while(true) {
-        string data = getStats();
-        file.open("data.txt",ios::out | ios::in | ios::app);
-        file << data;
-        file << "\n";
-        file.close();
-        if(connected && data != "") {
-            PostJson(data);
-        }
-        this_thread::sleep_for(300s);
-    }
-}
 int main() 
 {
-    // cout<<"Enter System UUID number"<<endl;
-    // cin>>uuid;
-    // cout<<uuid<<endl;
-    // cout<<"Length - "<<uuid.length()<<endl;
     curlInitialize();
-    thread t1(storeAndSendData);
-    connectionInit();
-    while(true){}
+    thread t1(sendData);
+    http_listener listener("http://localhost:9000/"+uuid);
+    listener.support(methods::GET,  handle_get);
+    try {
+      listener
+        .open()
+        .then([&listener]() {cout<<"Service Started"<<endl;})
+        .wait();
+        while (true);
+    }
+    catch (exception const & e) {
+        cout << e.what() << endl;
+    }
+
+   return 0;
 }
 

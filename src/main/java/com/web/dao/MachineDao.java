@@ -122,4 +122,20 @@ public class MachineDao {
 			return alertData;
 		}
 	}
+
+	public String getUuid(String systemName) {
+		try {
+			Statement stmt = (Statement) conn.createStatement();
+			String url = "select * from Machine where BINARY SystemName='"+systemName+"'";
+			ResultSet rs = stmt.executeQuery(url);
+			String uuid = null;
+			if(rs.next()) {
+				uuid = rs.getString("UUID");
+			}
+			return uuid;
+		} catch (Exception e) {
+			System.out.println("Exception in MachineDao getAllConfig method "+e.getMessage());
+			return null;
+		}
+	}
 }

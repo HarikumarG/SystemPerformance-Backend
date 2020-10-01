@@ -16,7 +16,7 @@ The masterv1 branch is the updated code with all the features included (java to 
 1. Install Java (openjdk version 11.0.8)
 2. Install maven (version 3.6.0)
 3. Install mysql (version 5.7.31)
-4. Install Elastic Search (version 7.9.0)
+4. Install Elastic Search (version 7.9.1)
 
 # Steps to Installation and Run
 
