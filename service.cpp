@@ -62,7 +62,7 @@ void PostJson(string data) {
 }
 void deleteContentsOfFile() {
     fstream file;
-    file.open("data.txt",ios::out | ios::trunc);
+    file.open("/home/uh/Documents/projects/system-performance/SystemPerformance-Backend/data.txt",ios::out | ios::trunc);
     if(file.is_open()) {
         file.close();
     } else {
@@ -72,7 +72,7 @@ void deleteContentsOfFile() {
 }
 void sendStoredData() {
     fstream file;
-    file.open("data.txt",ios::in);
+    file.open("/home/uh/Documents/projects/system-performance/SystemPerformance-Backend/data.txt",ios::in);
     if(file.is_open()) {
         string line;
         while(getline(file,line)) {
@@ -128,7 +128,7 @@ void sendData() {
         string data = getStats();
         if(!connectionInit()) {
             fstream file;
-            file.open("data.txt",ios::out | ios::in | ios::app);
+            file.open("/home/uh/Documents/projects/system-performance/SystemPerformance-Backend/data.txt",ios::out | ios::in | ios::app);
             if(file.is_open()) {
                 file << data;
                 file << "\n";
@@ -159,6 +159,7 @@ void curlInitialize() {
 }
 int main() 
 {
+    cout<<"Service Initialized"<<endl;
     curlInitialize();
     thread t1(sendData);
     http_listener listener("http://localhost:9000/"+uuid);

@@ -1,0 +1,16 @@
+# 1. In Ubuntu copy this file to /etc/systemd/system 
+# 2. Change the location of ExecStart to the compiled file of service.cpp
+# 3. To check status "systemctl status systemstats.service"
+# 4. Run "systemctl start systemstats.service" to start the service
+# 5. Run "systemctl stop systemstats.service" to stop the service
+
+[Unit]
+Description=Get System Usage and Statistics
+After=syslog.target
+
+[Service]
+Type=simple
+ExecStart=/home/uh/Documents/projects/system-performance/SystemPerformance-Backend/a.out
+
+[Install]
+WantedBy=multi-user.target
