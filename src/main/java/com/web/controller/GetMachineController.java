@@ -34,7 +34,7 @@ public class GetMachineController extends HttpServlet {
 		String empid = jsonObject.get("EmpID").getAsString();
 		String empName = jsonObject.get("EmpName").getAsString();
 
-		ArrayList<MachineDetails> machineList = Singleton.getMachineDao().getAllMachineDetails();
+		ArrayList<MachineDetails> machineList = Singleton.getMachineDao().getAllMachineDetails(empid);
 
 		String jsonObj = new Gson().toJson(machineList);
 		response.getWriter().write(jsonObj);

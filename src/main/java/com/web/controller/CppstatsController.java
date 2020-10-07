@@ -32,9 +32,14 @@ public class CppstatsController extends HttpServlet {
 		String data = jsonObject.get("data").getAsString();
 		System.out.println(data);
 		String[] stats = data.split("/",0);
-		boolean esCheck = Singleton.getElasticSearchDao().storeData(stats) ? true : false;
-		if(!esCheck) {
-			System.out.println("Data Not stored in ES");
+		String systemName = Singleton.getMachineDao().getSystemName(stats[0]);
+		if(systemName != null) {
+			boolean esCheck = Singleton.getElasticSearchDao().storeData(stats,systemName) ? true : false;
+			if(!esCheck) {
+				System.out.println("Data Not stored in ES");
+			}
+		} else {
+			System.out.println("Data Not stored in ES and SystemName is NULL");
 		}
 		boolean check = Singleton.getStatisticsDao().storeData(stats) ? true : false;
 		if(check) {

@@ -28,11 +28,11 @@ public class MachineDao {
 		}
 	}
 
-	public ArrayList<MachineDetails> getAllMachineDetails() {
+	public ArrayList<MachineDetails> getAllMachineDetails(String empid) {
 		ArrayList<MachineDetails> allDetails = new ArrayList<MachineDetails>();
 		try {
 			Statement stmt = (Statement) conn.createStatement();
-			String url = "select * from Machine";
+			String url = "select * from Machine where BINARY EmpID='"+empid+"'";
 			ResultSet rs = stmt.executeQuery(url);
 			while(rs.next()) {
 				MachineDetails details = new MachineDetails(); 
@@ -47,10 +47,10 @@ public class MachineDao {
 		}
 	}
 
-	public boolean storeMachineCredentials(String systemName,String uuid) {
+	public boolean storeMachineCredentials(String systemName,String uuid,String empid) {
 		try {
 			Statement stmt = (Statement) conn.createStatement();
-			String url = "insert into Machine(SystemName,UUID,Config)values('"+systemName+"','"+uuid+"','0')";
+			String url = "insert into Machine(SystemName,UUID,Config,EmpID)values('"+systemName+"','"+uuid+"','0','"+empid+"')";
 			int rowNum = stmt.executeUpdate(url);
 			if(rowNum > 0) {
 				return true;
@@ -62,10 +62,10 @@ public class MachineDao {
 		}
 	}
 
-	public boolean updateAlertConfig(String systemName,String ramUsage,String cpuUsage,String notify) {
+	public boolean updateAlertConfig(String empid,String systemName,String ramUsage,String cpuUsage,String notify) {
 		try {
 			Statement stmt = (Statement) conn.createStatement();
-			String url = "select Config from Machine where BINARY SystemName='"+systemName+"'";
+			String url = "select Config from Machine where BINARY SystemName='"+systemName+"' and BINARY EmpID='"+empid+"'";
 			ResultSet rs = stmt.executeQuery(url);
 			if(rs.next()) {
 				String config = ConfigService.updateConfig(rs.getString("Config"),notify,0);
@@ -135,6 +135,22 @@ public class MachineDao {
 			return uuid;
 		} catch (Exception e) {
 			System.out.println("Exception in MachineDao getAllConfig method "+e.getMessage());
+			return null;
+		}
+	}
+
+	public String getSystemName(String uuid) {
+		try {
+			Statement stmt = (Statement) conn.createStatement();
+			String url = "select * from Machine where BINARY UUID='"+uuid+"'";
+			ResultSet rs = stmt.executeQuery(url);
+			String systemName = null;
+			if(rs.next()) {
+				systemName = rs.getString("SystemName");
+			}
+			return systemName;
+		} catch (Exception e) {
+			System.out.println("Exception in MachineDao getSystemName method "+e.getMessage());
 			return null;
 		}
 	}

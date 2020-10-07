@@ -40,7 +40,7 @@ public class AlertController extends HttpServlet{
 		boolean userVerify = Singleton.getEmployeeDao().verifySettingsAccess(empid,password);
 		String resp = "Alert Update Failed";
 		if(userVerify) {
-			boolean check = Singleton.getMachineDao().updateAlertConfig(systemName,ramUsage,cpuUsage,alertEnable);
+			boolean check = Singleton.getMachineDao().updateAlertConfig(empid,systemName,ramUsage,cpuUsage,alertEnable);
 			resp = (check == true) ? "Alert Updated" : "Alert Update Failed";
 		}
 		String jsonObj = new Gson().toJson(resp);

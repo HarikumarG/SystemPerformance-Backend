@@ -33,8 +33,9 @@ public class MachineSignUpController extends HttpServlet {
 
 		String systemName = jsonObject.get("SystemName").getAsString();
 		String uuid = jsonObject.get("UUID").getAsString();
+		String empid = jsonObject.get("EmpID").getAsString();
 		
-		boolean check = Singleton.getMachineDao().storeMachineCredentials(systemName,uuid);
+		boolean check = Singleton.getMachineDao().storeMachineCredentials(systemName,uuid,empid);
 
 		String resp = (check == true) ? "SUCCESS" : "FAILURE";
 
